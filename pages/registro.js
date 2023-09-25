@@ -3,8 +3,25 @@ import Layout from '../components/Layout'
 import Link from 'next/link'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { useMutation, gql } from '@apollo/client'
+import toast, { Toaster } from 'react-hot-toast'
+import { useRouter } from 'next/router'
+
+const NUEVA_CUENTA = gql`
+    mutation NuevoUsuario($input: UsuarioInput!) {
+        nuevoUsuario(input: $input) {
+            id
+            nombre
+            apellido
+            email
+        }
+    }
+`
 
 export default function Registro () {
+    const router = useRouter()
+    // Mutation para crear nuevos usuarios
+    const [ nuevoUsuario ] = useMutation(NUEVA_CUENTA)
   // Validación de formulario
   const formik = useFormik({
     initialValues: {
@@ -19,13 +36,35 @@ export default function Registro () {
       email: Yup.string().email('El email no es válido').required('El email es obligatorio'),
       password: Yup.string().required('El password es obligatorio').min(8, 'El password debe ser de al menos 8 caracteres')
     }),
-    onSubmit: valores => {
-      console.log('Enviando...')
-      console.log(valores)
+    onSubmit: async valores => {
+        const { nombre, apellido, email, password } = valores
+      try {
+        const {data} = await nuevoUsuario({
+            variables: {
+                input: {
+                    nombre,
+                    apellido,
+                    email,
+                    password
+                }
+            }
+        })
+        if(data) {
+            toast.success('El usuario se registro correctamente')
+            formik.resetForm()
+            setTimeout(() => {
+                router.push('/login')
+            }, 3000);
+        }
+      } catch (error) {
+        console.log(error.message)
+        toast.error(error.message)
+      }
     }
   })
   return (
     <Layout title='Crear cuenta'>
+        <Toaster />
       <h1 className='text-center text-2xl text-white font-light'>Registro</h1>
       <div className='flex justify-center mt-5'>
         <div className='w-full max-w-sm'>
@@ -34,10 +73,10 @@ export default function Registro () {
               <label htmlFor='nombre' className='block text-gray-700 text-sm font-bold mb-2'>Nombre</label>
               <input type='text' id='nombre' placeholder='Nombre usuario' className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' value={formik.values.nombre} onChange={formik.handleChange} onBlur={formik.handleBlur} />
               {
-                            formik.touched.nombre && formik.errors.nombre && (
-                              <small className='text-red-500'>{formik.errors.nombre}</small>
-                            )
-                        }
+                formik.touched.nombre && formik.errors.nombre && (
+                    <small className='text-red-500'>{formik.errors.nombre}</small>
+                )
+                }
             </div>
             <div className='mb-4'>
               <label htmlFor='apellido' className='block text-gray-700 text-sm font-bold mb-2'>Apellido</label>
