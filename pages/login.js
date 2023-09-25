@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useMutation, gql } from '@apollo/client'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { setToken } from '../lib/sessionStorage'
 
@@ -42,8 +42,6 @@ export default function Login () {
                     }
                 })
 
-                console.log(data);
-
                 if(data) {
                     toast.success('Usuario autenticado')
                     setToken(data?.autenticarUsuario?.token)
@@ -59,6 +57,7 @@ export default function Login () {
     })
   return (
     <Layout title='Iniciar Sesión'>
+        <Toaster />
       <h1 className='text-center text-2xl text-white font-light'>Iniciar sesión</h1>
       <div className='flex justify-center mt-5'>
         <div className='w-full max-w-sm'>
