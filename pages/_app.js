@@ -1,5 +1,5 @@
-import { ApolloProvider } from "@apollo/client"
-import client from "../config/apollo"
+import { ApolloProvider } from '@apollo/client'
+import client from '../config/apollo'
 
 function MyApp ({ Component, pageProps }) {
   return (

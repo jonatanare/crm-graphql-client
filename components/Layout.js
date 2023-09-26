@@ -3,6 +3,7 @@ import Script from 'next/script'
 import React from 'react'
 import Sidebar from './Sidebar'
 import { useRouter } from 'next/router'
+import Nav from './Nav'
 
 export default function Layout ({ children, title }) {
   const router = useRouter()
@@ -25,6 +26,7 @@ export default function Layout ({ children, title }) {
                   <div className='flex min-h-screen'>
                     <Sidebar />
                     <main className='sm:w-2/3 xl:w-4/5 sm:min-h-screen p-5'>
+                      <Nav />
                       {children}
                     </main>
                   </div>

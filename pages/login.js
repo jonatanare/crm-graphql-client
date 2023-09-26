@@ -17,47 +17,45 @@ const AUTENTICAR_USUARIO = gql`
 `
 
 export default function Login () {
-    const router = useRouter()
+  const router = useRouter()
 
-    // Mutation autenticar usuario
-    const [ loginUsuario ] = useMutation(AUTENTICAR_USUARIO)
-    const formik = useFormik({
-        initialValues: {
-            email: '',
-            password: ''
-        },
-        validationSchema: Yup.object({
-            email: Yup.string().email('Email no es válido').required('El email es obligatorio'),
-            password: Yup.string().required('El password es obligatorio')
-        }),
-        onSubmit: async (valores) => {
-            const { email, password} = valores
-            try {
-                const { data } = await loginUsuario({
-                    variables: {
-                        input: {
-                            email,
-                            password
-                        }
-                    }
-                })
-
-                if(data) {
-                    toast.success('Usuario autenticado')
-                    setToken(data?.autenticarUsuario?.token)
-                    formik.resetForm()
-                    setTimeout(() => {
-                        router.push('/')
-                    }, 3000);
-                }
-            } catch (error) {
-                toast.error(error.message)
+  // Mutation autenticar usuario
+  const [loginUsuario] = useMutation(AUTENTICAR_USUARIO)
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email('Email no es válido').required('El email es obligatorio'),
+      password: Yup.string().required('El password es obligatorio')
+    }),
+    onSubmit: async (valores) => {
+      const { email, password } = valores
+      try {
+        const { data } = await loginUsuario({
+          variables: {
+            input: {
+              email,
+              password
             }
+          }
+        })
+
+        if (data) {
+          toast.success('Usuario autenticado')
+          setToken(data?.autenticarUsuario?.token)
+          formik.resetForm()
+          router.push('/')
         }
-    })
+      } catch (error) {
+        toast.error(error.message)
+      }
+    }
+  })
   return (
     <Layout title='Iniciar Sesión'>
-        <Toaster />
+      <Toaster />
       <h1 className='text-center text-2xl text-white font-light'>Iniciar sesión</h1>
       <div className='flex justify-center mt-5'>
         <div className='w-full max-w-sm'>
@@ -67,7 +65,7 @@ export default function Login () {
               <input type='email' id='email' placeholder='Email usuario' className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' value={formik.values.email} onChange={formik.handleChange} onBlur={formik.handleBlur} />
               {
                 formik.touched.email && formik.errors.email && (
-                    <small className='text-red-500'>{formik.errors.email}</small>
+                  <small className='text-red-500'>{formik.errors.email}</small>
                 )
                 }
             </div>
@@ -76,7 +74,7 @@ export default function Login () {
               <input type='password' id='password' placeholder='Password usuario' className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' value={formik.values.password} onChange={formik.handleChange} onBlur={formik.handleBlur} />
               {
                 formik.touched.password && formik.errors.password && (
-                    <small className='text-red-500'>{formik.errors.password}</small>
+                  <small className='text-red-500'>{formik.errors.password}</small>
                 )
                 }
             </div>

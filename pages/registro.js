@@ -19,9 +19,9 @@ const NUEVA_CUENTA = gql`
 `
 
 export default function Registro () {
-    const router = useRouter()
-    // Mutation para crear nuevos usuarios
-    const [ nuevoUsuario ] = useMutation(NUEVA_CUENTA)
+  const router = useRouter()
+  // Mutation para crear nuevos usuarios
+  const [nuevoUsuario] = useMutation(NUEVA_CUENTA)
   // Validación de formulario
   const formik = useFormik({
     initialValues: {
@@ -37,24 +37,24 @@ export default function Registro () {
       password: Yup.string().required('El password es obligatorio').min(8, 'El password debe ser de al menos 8 caracteres')
     }),
     onSubmit: async valores => {
-        const { nombre, apellido, email, password } = valores
+      const { nombre, apellido, email, password } = valores
       try {
-        const {data} = await nuevoUsuario({
-            variables: {
-                input: {
-                    nombre,
-                    apellido,
-                    email,
-                    password
-                }
+        const { data } = await nuevoUsuario({
+          variables: {
+            input: {
+              nombre,
+              apellido,
+              email,
+              password
             }
+          }
         })
-        if(data) {
-            toast.success('El usuario se registro correctamente')
-            formik.resetForm()
-            setTimeout(() => {
-                router.push('/login')
-            }, 3000);
+        if (data) {
+          toast.success('El usuario se registro correctamente')
+          formik.resetForm()
+          setTimeout(() => {
+            router.push('/login')
+          }, 3000)
         }
       } catch (error) {
         console.log(error.message)
@@ -64,7 +64,7 @@ export default function Registro () {
   })
   return (
     <Layout title='Crear cuenta'>
-        <Toaster />
+      <Toaster />
       <h1 className='text-center text-2xl text-white font-light'>Registro</h1>
       <div className='flex justify-center mt-5'>
         <div className='w-full max-w-sm'>
@@ -74,7 +74,7 @@ export default function Registro () {
               <input type='text' id='nombre' placeholder='Nombre usuario' className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' value={formik.values.nombre} onChange={formik.handleChange} onBlur={formik.handleBlur} />
               {
                 formik.touched.nombre && formik.errors.nombre && (
-                    <small className='text-red-500'>{formik.errors.nombre}</small>
+                  <small className='text-red-500'>{formik.errors.nombre}</small>
                 )
                 }
             </div>
