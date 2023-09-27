@@ -19,11 +19,39 @@ const NUEVO_CLIENTE = gql`
     }
 `
 
+const OBTENER_CLIENTES_USUARIO = gql`
+  query ObtenerClientesVendedor {
+    obtenerClientesVendedor {
+      id
+      nombre
+      apellido
+      empresa
+      email
+      telefono
+      vendedor
+    }
+  }
+`
+
 export default function Nuevo () {
     const router = useRouter()
 
     // Muation para crear nuevo cliente
-    const [ nuevoCliente ] = useMutation(NUEVO_CLIENTE)
+    const [ nuevoCliente ] = useMutation(NUEVO_CLIENTE, {
+      update(cache, { data: { nuevoCliente }}) {
+        // Obtener el objeto de cahce que deseamos actualziar
+
+        const { obtenerClientesVendedor } = cache.readQuery({ query: OBTENER_CLIENTES_USUARIO})
+
+        // Reescribimos el cache ( El cache nunca se debe modificar )
+        cache.writeQuery({
+          query: OBTENER_CLIENTES_USUARIO,
+          data: {
+            obtenerClientesVendedor: [...obtenerClientesVendedor, nuevoCliente]
+          }
+        })
+      }
+    })
     const formik = useFormik({
         initialValues: {
             nombre: '',
@@ -43,7 +71,7 @@ export default function Nuevo () {
           const { nombre, apellido, email, telefono, empresa } = valores
             try {
 
-              const { data } = await nuevoCliente({
+              const { data, error } = await nuevoCliente({
                 variables: {
                   input: {
                     nombre,
@@ -62,7 +90,7 @@ export default function Nuevo () {
               }
                 
             } catch (error) {
-                toast.error(error.message)
+              toast.error(error.message)
             }
         }
     })
@@ -119,7 +147,7 @@ export default function Nuevo () {
               }
             </div>
 
-            <button className='bg-gray-800 w-full mt-5 p-2 text-white uppercase hover:bg-gray-700 rounded-md'>Guardar</button>
+            <button className='bg-gray-800 w-full mt-5 p-2 text-white uppercase hover:bg-gray-700 rounded-md'>Registrar cliente</button>
           </form>
         </div>
       </div>
